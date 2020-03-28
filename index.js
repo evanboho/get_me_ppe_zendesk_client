@@ -1,53 +1,27 @@
-var zendesk = require('node-zendesk');
+var GetMePpeZendeskClient = require('./lib/get_me_ppe_zendesk_client');
 
+var client = new GetMePpeZendeskClient;
 
-function GetMePpeZendeskClient() {
-  var organizationFields = {};
-  var client = zendesk.createClient({
-    username:  process.env.ZD_API_USERNAME,
-    token:     process.env.ZD_API_TOKEN,
-    remoteUri: 'https://getmeppe-sfbay.zendesk.com/api/v2'
-  });
+var command = process.argv.slice(2);
 
-  function getUsers() {
-    client.users.list((err, req, result) => {
-      if (err) {
-        console.log(err);
-        return;
-      }
-      result.forEach((r) => {
-        console.log(JSON.stringify(r, null, 2, true));
-      })
-    });
-  }
-
-  function getTickets() {
-    client.users.list((err, req, result) => {
-      if (err) {
-        console.log(err);
-        return;
-      }
-      result.forEach((r) => {
-        console.log(JSON.stringify(r, null, 2, true));
-      })
-    });
-  }
-
-  function getOrganizationFields() {
-    client.organizationfields.list((err, req, result) => {
-      result.forEach((item) => {
-        organizationFields[item.id] = item;
-      });
-      console.log(organizationFields)
-    })
-  }
-
-  return {
-    getUsers: getUsers,
-    getTickets: getTickets,
-    getOrganizationFields: getOrganizationFields,
-  }
+switch(command[0]) {
+  case 'getUsers':
+    client.getUsers();
+    break;
+  case 'getTicketFields':
+    client.getTicketFields();
+    break;
+  case 'getTickets':
+    client.getTickets();
+    break;
+  case 'getTicket':
+    var id = command[1];
+    if (id == undefined) {
+      console.error('Missing id arg');
+      return;
+    }
+    client.getTicket(id);
+    break;
+  default:
+    console.error(`Unknown command '${command[0]}'`)
 }
-
-var client = new GetMePpeZendeskClient
-client.getOrganizationFields()
