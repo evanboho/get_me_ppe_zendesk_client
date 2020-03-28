@@ -22,6 +22,19 @@ switch(command[0]) {
     }
     client.getTicket(id);
     break;
+  case 'updateTicketStatus':
+    var id = command[1];
+    if (id == undefined) {
+      console.error('Missing id arg');
+      return;
+    }
+    var status = command[2];
+    if (id == undefined) {
+      console.error('Missing status arg');
+      return;
+    }
+    client.updateTicketState(id, status);
+    break;
   default:
     console.error(`Unknown command '${command[0]}'`)
 }
